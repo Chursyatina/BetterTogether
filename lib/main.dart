@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, unnecessary_new
 import 'package:bettertogether/pages/Home/home.dart';
+import 'package:bettertogether/service_locator.dart';
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:objectbox/objectbox.dart';
@@ -12,14 +14,18 @@ import 'objectbox.g.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final dir = await getApplicationDocumentsDirectory();
-  final store = Store(getObjectBoxModel(), directory: "${dir.path}/objectbox16");
+  
+  await setupLocator();
+  await getIt.allReady();
 
-  runApp(MaterialApp(
-      theme: getTheme(),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => HomePage(),
-      },
-    ));
+  runApp(CalendarControllerProvider(
+    controller:  EventController(),
+    child: MaterialApp(
+        theme: getTheme(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => HomePage(),
+        },
+      ),
+  ));
 }

@@ -11,6 +11,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Ты пидор');
+    return Text('Будущая страница профиля');
   }
 }

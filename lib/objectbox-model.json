@@ -18,25 +18,106 @@
           "id": "2:3864404062067891333",
           "name": "name",
           "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:7116827888848056939",
+      "lastPropertyId": "7:406074836850048277",
+      "name": "Task",
+      "properties": [
+        {
+          "id": "1:6488089925054314558",
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
-          "id": "3:809669189957950587",
+          "id": "2:81322592733296491",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:83997537409543363",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "4:26288662105214445",
           "name": "date",
           "type": 10
+        },
+        {
+          "id": "5:1110832367842513702",
+          "name": "subtasks",
+          "type": 30
+        },
+        {
+          "id": "6:4499765543780006275",
+          "name": "isDone",
+          "type": 1
+        },
+        {
+          "id": "7:406074836850048277",
+          "name": "userId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "2:6236409523386629376",
+          "relationTarget": "User"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:1856663112864766613",
+      "lastPropertyId": "5:8052149897784057641",
+      "name": "Habit",
+      "properties": [
+        {
+          "id": "1:3904479014898455749",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1787769627028000404",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:4139723815983659937",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "4:7364234349509507783",
+          "name": "date",
+          "type": 10
+        },
+        {
+          "id": "5:8052149897784057641",
+          "name": "userId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:5338340167202547855",
+          "relationTarget": "User"
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "1:2950475164016416182",
-  "lastIndexId": "0:0",
+  "lastEntityId": "3:1856663112864766613",
+  "lastIndexId": "2:6236409523386629376",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    809669189957950587
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

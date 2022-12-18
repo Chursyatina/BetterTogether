@@ -18,7 +18,7 @@ class HomePageNavigation extends StatelessWidget {
     return Theme(
         data: getTheme().copyWith(splashFactory: NoSplash.splashFactory),
         child: NavigationBar(
-          backgroundColor: Theme.of(context).foursPartyColor,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           onDestinationSelected: onTap,
           height: 55,
@@ -29,7 +29,7 @@ class HomePageNavigation extends StatelessWidget {
             label: '',
             icon: SvgPicture.asset(
               e,
-              color: Theme.of(context).colorScheme.primary
+              color: Colors.black
             ),
           ))
               .toList(),

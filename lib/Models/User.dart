@@ -1,15 +1,18 @@
-import '../objectbox.g.dart';
+import 'package:objectbox/objectbox.dart';
+
+import 'Habit.dart';
+import 'Task.dart';
 
 @Entity()
 class User {
   @Id()
   int id = 0;
-  
-  String? name;
-  
-  @Property(type: PropertyType.date) // Store as int in milliseconds
-  DateTime? date;
 
-  @Transient() // Ignore this property, not stored in the database.
-  int? computedProperty;
+  String? name;
+
+  @Backlink('user')
+  final tasks = ToMany<Task>();
+
+  @Backlink('user')
+  final habits = ToMany<Habit>();
 }

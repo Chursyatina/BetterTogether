@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 ThemeData getTheme() {
   return ThemeData(
       colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: Color(0xffBABDBF),
-          secondary: Color(0xffF2F2F2),
-          background: Color(0xffF2F2F2)),
+          primary: Color(0x4F4D8C),
+          secondary: Color(0xff6347),
+          background: Color(0x64732F)),
           textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Colors.red,
-          selectionColor: Colors.red,
-          selectionHandleColor: Colors.red,
+          selectionColor: Colors.black,
+          selectionHandleColor: Colors.blue,
     ),);
 }
 
 extension ThemeDataExtension on ThemeData {
   Color get thirdPartyColor {
-    return Color(0xff737373);
+    return Color(0xff6347);
   }
 
   Color get foursPartyColor {
-    return Color(0xff1C1B1F);
+    return Color(0xff6347);
   }
 
   Color get fifthPartyColor {
-    return Color(0xff000000);
+    return Color(0xff6347);
   }
 }

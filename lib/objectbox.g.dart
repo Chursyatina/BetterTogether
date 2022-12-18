@@ -12,7 +12,10 @@ import 'dart:typed_data';
 import 'package:flat_buffers/flat_buffers.dart' as fb;
 import 'package:objectbox/internal.dart'; // generated code can access "internal" functionality
 import 'package:objectbox/objectbox.dart';
+import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'Models/Habit.dart';
+import 'Models/Task.dart';
 import 'Models/User.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -33,27 +36,107 @@ final _entities = <ModelEntity>[
             id: const IdUid(2, 3864404062067891333),
             name: 'name',
             type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[
+        ModelBacklink(name: 'tasks', srcEntity: 'Task', srcField: 'user'),
+        ModelBacklink(name: 'habits', srcEntity: 'Habit', srcField: 'user')
+      ]),
+  ModelEntity(
+      id: const IdUid(2, 7116827888848056939),
+      name: 'Task',
+      lastPropertyId: const IdUid(7, 406074836850048277),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 6488089925054314558),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 81322592733296491),
+            name: 'name',
+            type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(3, 809669189957950587),
+            id: const IdUid(3, 83997537409543363),
+            name: 'description',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 26288662105214445),
             name: 'date',
             type: 10,
-            flags: 0)
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 1110832367842513702),
+            name: 'subtasks',
+            type: 30,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 4499765543780006275),
+            name: 'isDone',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 406074836850048277),
+            name: 'userId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(2, 6236409523386629376),
+            relationTarget: 'User')
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(3, 1856663112864766613),
+      name: 'Habit',
+      lastPropertyId: const IdUid(5, 8052149897784057641),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 3904479014898455749),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 1787769627028000404),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 4139723815983659937),
+            name: 'description',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 7364234349509507783),
+            name: 'date',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 8052149897784057641),
+            name: 'userId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(1, 5338340167202547855),
+            relationTarget: 'User')
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
 /// Open an ObjectBox store with the model declared in this file.
-Store openStore(
+Future<Store> openStore(
         {String? directory,
         int? maxDBSizeInKB,
         int? fileMode,
         int? maxReaders,
         bool queriesCaseSensitiveDefault = true,
-        String? macosApplicationGroup}) =>
+        String? macosApplicationGroup}) async =>
     Store(getObjectBoxModel(),
-        directory: directory,
+        directory: directory ?? (await defaultStoreDirectory()).path,
         maxDBSizeInKB: maxDBSizeInKB,
         fileMode: fileMode,
         maxReaders: maxReaders,
@@ -64,13 +147,13 @@ Store openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(1, 2950475164016416182),
-      lastIndexId: const IdUid(0, 0),
+      lastEntityId: const IdUid(3, 1856663112864766613),
+      lastIndexId: const IdUid(2, 6236409523386629376),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [],
+      retiredPropertyUids: const [809669189957950587],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -80,7 +163,14 @@ ModelDefinition getObjectBoxModel() {
     User: EntityDefinition<User>(
         model: _entities[0],
         toOneRelations: (User object) => [],
-        toManyRelations: (User object) => {},
+        toManyRelations: (User object) => {
+              RelInfo<Task>.toOneBacklink(
+                      7, object.id, (Task srcObject) => srcObject.user):
+                  object.tasks,
+              RelInfo<Habit>.toOneBacklink(
+                      5, object.id, (Habit srcObject) => srcObject.user):
+                  object.habits
+            },
         getId: (User object) => object.id,
         setId: (User object, int id) {
           object.id = id;
@@ -91,7 +181,58 @@ ModelDefinition getObjectBoxModel() {
           fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
-          fbb.addInt64(2, object.date?.millisecondsSinceEpoch);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = User()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..name = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 6);
+          InternalToManyAccess.setRelInfo(
+              object.tasks,
+              store,
+              RelInfo<Task>.toOneBacklink(
+                  7, object.id, (Task srcObject) => srcObject.user),
+              store.box<User>());
+          InternalToManyAccess.setRelInfo(
+              object.habits,
+              store,
+              RelInfo<Habit>.toOneBacklink(
+                  5, object.id, (Habit srcObject) => srcObject.user),
+              store.box<User>());
+          return object;
+        }),
+    Task: EntityDefinition<Task>(
+        model: _entities[1],
+        toOneRelations: (Task object) => [object.user],
+        toManyRelations: (Task object) => {},
+        getId: (Task object) => object.id,
+        setId: (Task object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Task object, fb.Builder fbb) {
+          final nameOffset =
+              object.name == null ? null : fbb.writeString(object.name!);
+          final descriptionOffset = object.description == null
+              ? null
+              : fbb.writeString(object.description!);
+          final subtasksOffset = object.subtasks == null
+              ? null
+              : fbb.writeList(object.subtasks!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          fbb.startTable(8);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, nameOffset);
+          fbb.addOffset(2, descriptionOffset);
+          fbb.addInt64(3, object.date?.millisecondsSinceEpoch);
+          fbb.addOffset(4, subtasksOffset);
+          fbb.addBool(5, object.isDone);
+          fbb.addInt64(6, object.user.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -99,15 +240,67 @@ ModelDefinition getObjectBoxModel() {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
           final dateValue =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 8);
-          final object = User()
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 10);
+          final object = Task()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..name = const fb.StringReader(asciiOptimization: true)
                 .vTableGetNullable(buffer, rootOffset, 6)
+            ..description = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 8)
+            ..date = dateValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(dateValue)
+            ..subtasks = const fb.ListReader<String>(
+                    fb.StringReader(asciiOptimization: true),
+                    lazy: false)
+                .vTableGetNullable(buffer, rootOffset, 12)
+            ..isDone =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14);
+          object.user.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0);
+          object.user.attach(store);
+          return object;
+        }),
+    Habit: EntityDefinition<Habit>(
+        model: _entities[2],
+        toOneRelations: (Habit object) => [object.user],
+        toManyRelations: (Habit object) => {},
+        getId: (Habit object) => object.id,
+        setId: (Habit object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Habit object, fb.Builder fbb) {
+          final nameOffset =
+              object.name == null ? null : fbb.writeString(object.name!);
+          final descriptionOffset = object.description == null
+              ? null
+              : fbb.writeString(object.description!);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, nameOffset);
+          fbb.addOffset(2, descriptionOffset);
+          fbb.addInt64(3, object.date?.millisecondsSinceEpoch);
+          fbb.addInt64(4, object.user.targetId);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final dateValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 10);
+          final object = Habit()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..name = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 6)
+            ..description = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 8)
             ..date = dateValue == null
                 ? null
                 : DateTime.fromMillisecondsSinceEpoch(dateValue);
-
+          object.user.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          object.user.attach(store);
           return object;
         })
   };
@@ -122,7 +315,51 @@ class User_ {
 
   /// see [User.name]
   static final name = QueryStringProperty<User>(_entities[0].properties[1]);
+}
 
-  /// see [User.date]
-  static final date = QueryIntegerProperty<User>(_entities[0].properties[2]);
+/// [Task] entity fields to define ObjectBox queries.
+class Task_ {
+  /// see [Task.id]
+  static final id = QueryIntegerProperty<Task>(_entities[1].properties[0]);
+
+  /// see [Task.name]
+  static final name = QueryStringProperty<Task>(_entities[1].properties[1]);
+
+  /// see [Task.description]
+  static final description =
+      QueryStringProperty<Task>(_entities[1].properties[2]);
+
+  /// see [Task.date]
+  static final date = QueryIntegerProperty<Task>(_entities[1].properties[3]);
+
+  /// see [Task.subtasks]
+  static final subtasks =
+      QueryStringVectorProperty<Task>(_entities[1].properties[4]);
+
+  /// see [Task.isDone]
+  static final isDone = QueryBooleanProperty<Task>(_entities[1].properties[5]);
+
+  /// see [Task.user]
+  static final user =
+      QueryRelationToOne<Task, User>(_entities[1].properties[6]);
+}
+
+/// [Habit] entity fields to define ObjectBox queries.
+class Habit_ {
+  /// see [Habit.id]
+  static final id = QueryIntegerProperty<Habit>(_entities[2].properties[0]);
+
+  /// see [Habit.name]
+  static final name = QueryStringProperty<Habit>(_entities[2].properties[1]);
+
+  /// see [Habit.description]
+  static final description =
+      QueryStringProperty<Habit>(_entities[2].properties[2]);
+
+  /// see [Habit.date]
+  static final date = QueryIntegerProperty<Habit>(_entities[2].properties[3]);
+
+  /// see [Habit.user]
+  static final user =
+      QueryRelationToOne<Habit, User>(_entities[2].properties[4]);
 }
