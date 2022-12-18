@@ -19,8 +19,6 @@ Future<void> main() async {
   await setupLocator();
   await getIt.allReady();
 
-  runApp(CalendarControllerProvider(
-    controller:  EventController(),
-    child: const App()
-  ),);
+  runApp(const App()
+  );
 }

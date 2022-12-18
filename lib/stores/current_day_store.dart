@@ -12,38 +12,39 @@ abstract class _CurrentDayStoreBase with Store {
   HabitRepository habitRepository;
 
   @observable
-  DateTime? currentDay;
+  DateTime currentDay = DateTime.now();
 
   @observable
-  List<Task>? tasks;
+  List<Task> tasks = [];
 
   @observable
-  List<Habit>? habits;
+  List<Habit> habits = [];
 
   _CurrentDayStoreBase(this.taskRepository, this.habitRepository) {
-    this.update();
+    currentDay = DateTime.now();
+    update();
   }
 
   @action
   void setCurrentDay(DateTime dateTime) {
-    this.currentDay = dateTime;
-    this.update();
+    currentDay = dateTime;
+    update();
   }
 
   @action
   void update() {
     tasks = taskRepository.tasks
         .where((element) =>
-            element.date!.year == currentDay!.year &&
-            element.date!.month == currentDay!.month &&
-            element.date!.day == currentDay!.day)
+            element.date!.year == currentDay.year &&
+            element.date!.month == currentDay.month &&
+            element.date!.day == currentDay.day)
         .toList();
 
     habits = habitRepository.habits
         .where((element) =>
-            element.date!.year == currentDay!.year &&
-            element.date!.month == currentDay!.month &&
-            element.date!.day == currentDay!.day)
+            element.date!.year == currentDay.year &&
+            element.date!.month == currentDay.month &&
+            element.date!.day == currentDay.day)
         .toList();
   }
 }

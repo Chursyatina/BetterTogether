@@ -24,7 +24,6 @@ class _AppState extends State<App> {
   final TaskRepository _taskRepository = getIt<TaskRepository>();
   final HabitRepository _habitRepository = getIt<HabitRepository>();
 
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -34,7 +33,6 @@ class _AppState extends State<App> {
         Provider<HabitRepository>(create: (_) => _habitRepository),
       ],
       child: MaterialApp(
-          theme: getTheme(),
           initialRoute: '/',
           routes: {
             '/': (context) => HomePage(),

@@ -13,13 +13,13 @@ mixin _$CurrentDayStore on _CurrentDayStoreBase, Store {
       Atom(name: '_CurrentDayStoreBase.currentDay', context: context);
 
   @override
-  DateTime? get currentDay {
+  DateTime get currentDay {
     _$currentDayAtom.reportRead();
     return super.currentDay;
   }
 
   @override
-  set currentDay(DateTime? value) {
+  set currentDay(DateTime value) {
     _$currentDayAtom.reportWrite(value, super.currentDay, () {
       super.currentDay = value;
     });
@@ -29,13 +29,13 @@ mixin _$CurrentDayStore on _CurrentDayStoreBase, Store {
       Atom(name: '_CurrentDayStoreBase.tasks', context: context);
 
   @override
-  List<Task>? get tasks {
+  List<Task> get tasks {
     _$tasksAtom.reportRead();
     return super.tasks;
   }
 
   @override
-  set tasks(List<Task>? value) {
+  set tasks(List<Task> value) {
     _$tasksAtom.reportWrite(value, super.tasks, () {
       super.tasks = value;
     });
@@ -45,13 +45,13 @@ mixin _$CurrentDayStore on _CurrentDayStoreBase, Store {
       Atom(name: '_CurrentDayStoreBase.habits', context: context);
 
   @override
-  List<Habit>? get habits {
+  List<Habit> get habits {
     _$habitsAtom.reportRead();
     return super.habits;
   }
 
   @override
-  set habits(List<Habit>? value) {
+  set habits(List<Habit> value) {
     _$habitsAtom.reportWrite(value, super.habits, () {
       super.habits = value;
     });

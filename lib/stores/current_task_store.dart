@@ -10,6 +10,9 @@ abstract class _CurrentTaskStoreBase with Store {
   @observable
   String description = '';
 
+  @observable
+  DateTime date = DateTime.now();
+
   @action
   void setName(String name){
     this.name = name;
@@ -18,5 +21,10 @@ abstract class _CurrentTaskStoreBase with Store {
   @action
   void setDescription(String description){
     this.description = description;
+  }
+
+  @action
+  void setDate(DateTime date){
+    this.date = date;
   }
 }

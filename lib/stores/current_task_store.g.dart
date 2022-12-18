@@ -41,6 +41,22 @@ mixin _$CurrentTaskStore on _CurrentTaskStoreBase, Store {
     });
   }
 
+  late final _$dateAtom =
+      Atom(name: '_CurrentTaskStoreBase.date', context: context);
+
+  @override
+  DateTime get date {
+    _$dateAtom.reportRead();
+    return super.date;
+  }
+
+  @override
+  set date(DateTime value) {
+    _$dateAtom.reportWrite(value, super.date, () {
+      super.date = value;
+    });
+  }
+
   late final _$_CurrentTaskStoreBaseActionController =
       ActionController(name: '_CurrentTaskStoreBase', context: context);
 
@@ -67,10 +83,22 @@ mixin _$CurrentTaskStore on _CurrentTaskStoreBase, Store {
   }
 
   @override
+  void setDate(DateTime date) {
+    final _$actionInfo = _$_CurrentTaskStoreBaseActionController.startAction(
+        name: '_CurrentTaskStoreBase.setDate');
+    try {
+      return super.setDate(date);
+    } finally {
+      _$_CurrentTaskStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 name: ${name},
-description: ${description}
+description: ${description},
+date: ${date}
     ''';
   }
 }

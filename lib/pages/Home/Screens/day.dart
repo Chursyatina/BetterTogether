@@ -1,5 +1,7 @@
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
+import 'package:bettertogether/service_locator.dart';
+import 'package:bettertogether/stores/current_day_store.dart';
 import 'package:bettertogether/stores/habit_store.dart';
 import 'package:bettertogether/stores/task_store.dart';
 import 'package:bettertogether/stores/user_store.dart';
@@ -20,12 +22,24 @@ class DayScreen extends StatefulWidget {
 class _DayScreenState extends State<DayScreen> {
   int currentIndex = 0;
   CalendarFormat _calendarFormat = CalendarFormat.week;
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  CurrentDayStore currentDayStore = getIt<CurrentDayStore>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    currentDayStore.setCurrentDay(DateTime.now());
+  }
 
   @override
   Widget build(BuildContext context) {
-    UserRepository userRepository = Provider.of<UserRepository>(context);
-    TaskRepository taskRepository = Provider.of<TaskRepository>(context);
-    HabitRepository habitRepository = Provider.of<HabitRepository>(context);
+    UserRepository userRepository = context.read<UserRepository>();
+    TaskRepository taskRepository = context.read<TaskRepository>();
+    HabitRepository habitRepository = context.read<HabitRepository>();
+
 
     return Scaffold(
       body: SlidingUpPanel(
@@ -44,17 +58,19 @@ class _DayScreenState extends State<DayScreen> {
           minHeight: 150,
           body: Observer(builder: (_) {
             return ListView.builder(
-                itemCount: taskRepository.tasks.length,
+                itemCount: currentDayStore.tasks.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Dismissible(
-                    key: Key(taskRepository.tasks[index].id.toString()),
+                    key: Key(currentDayStore.tasks[index].id.toString()),
                     child: Card(
                       child: ListTile(
                           title: Text(
-                              taskRepository.tasks[index].name.toString())),
+                              currentDayStore.tasks[index].name.toString())),
                     ),
                     onDismissed: (direction) {
-                      taskRepository.removeTask(taskRepository.tasks[index]);
+                      Task removable = currentDayStore.tasks[index];
+                      currentDayStore.tasks.remove(removable);
+                      taskRepository.removeTask(removable);
                     },
                   );
                 });
@@ -113,13 +129,24 @@ class _DayScreenState extends State<DayScreen> {
                         startingDayOfWeek: StartingDayOfWeek.monday,
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 3, 14),
-                        focusedDay: DateTime.now(),
+                        focusedDay: _focusedDay,
                         calendarFormat: _calendarFormat,
+                        selectedDayPredicate: ((day) {
+                          return isSameDay(_selectedDay, day);
+                        }),
                         onFormatChanged: ((format) {
                           setState(() {
                             _calendarFormat = format;
                           });
                         }),
+                        onDaySelected: (selectedDay, focusedDay) {
+                          currentDayStore.setCurrentDay(focusedDay);
+
+                          setState(() {
+                            _selectedDay = selectedDay;
+                            _focusedDay = focusedDay;
+                          });
+                        },
                       ),
                     ],
                   ),

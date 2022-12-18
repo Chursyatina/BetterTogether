@@ -7,6 +7,7 @@ import 'package:bettertogether/stores/habit_store.dart';
 import 'package:bettertogether/stores/task_store.dart';
 import 'package:bettertogether/stores/user_store.dart';
 import 'package:calendar_view/calendar_view.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
@@ -26,9 +27,9 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserRepository userRepository = Provider.of<UserRepository>(context);
-    TaskRepository taskRepository = Provider.of<TaskRepository>(context);
-    HabitRepository habitRepository = Provider.of<HabitRepository>(context);
+    UserRepository userRepository = context.read<UserRepository>();
+    TaskRepository taskRepository = context.read<TaskRepository>();
+    HabitRepository habitRepository = context.read<HabitRepository>();
 
     return DefaultTabController(
       length: 2,
@@ -86,6 +87,23 @@ class _TaskScreenState extends State<TaskScreen> {
                     }),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SizedBox(
+                    height: 30,
+                    child: Observer(builder: (_) {
+                      return DateTimePicker(
+                        type: DateTimePickerType.date,
+                        initialValue: DateTime.now().toString(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        onChanged: ((value) {
+                          currentTaskStore.setDate(DateTime.parse(value));
+                        }),
+                      );
+                    }),
+                  ),
+                ),
                 Expanded(
                   child: SizedBox(),
                 ),
@@ -96,6 +114,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       Task task = Task();
                       task.name = currentTaskStore.name;
                       task.description = currentTaskStore.description;
+                      task.date = currentTaskStore.date;
                       taskRepository.putTask(task);
                       Navigator.restorablePushNamedAndRemoveUntil(context, '/', (route) => false);
                     },
