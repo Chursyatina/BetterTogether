@@ -1,9 +1,15 @@
 import 'dart:ui';
 
+import 'package:bettertogether/Models/Habit.dart';
+import 'package:bettertogether/service_locator.dart';
 import 'package:bettertogether/stores/current_task_store.dart';
+import 'package:bettertogether/stores/habit_store.dart';
+import 'package:bettertogether/stores/task_store.dart';
+import 'package:bettertogether/stores/user_store.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
 
 import '../../../Core/theme.dart';
 import '../../../Models/Task.dart';
@@ -20,57 +26,102 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          alignment: Alignment.center,
-          width: double.infinity,
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Color.fromARGB(255, 139, 249, 85)),
-          child: Container(
-            alignment: Alignment.topLeft,
-            child: Observer(builder: (_) {
-              return TextField(
-                controller: TextEditingController()
-                  ..text = currentTaskStore.name,
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Task'),
-                onChanged: (value) {
-                  currentTaskStore.setName(value);
-                },
-              );
-            }),
+    UserRepository userRepository = Provider.of<UserRepository>(context);
+    TaskRepository taskRepository = Provider.of<TaskRepository>(context);
+    HabitRepository habitRepository = Provider.of<HabitRepository>(context);
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.grey,
+          toolbarHeight: 10,
+          bottom: const TabBar(
+            tabs: [
+              Tab(
+                text: "Task",
+              ),
+              Tab(text: "Habit"),
+            ],
           ),
         ),
-        Container(
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.all(10),
-          alignment: Alignment.topLeft,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Color.fromARGB(255, 79, 198, 241),
-          ),
-          child: SizedBox(
-            height: 30,
-            child: Observer(builder: (_) {
-              return TextField(
-                controller: TextEditingController()
-                  ..text = currentTaskStore.description,
-                textAlign: TextAlign.left,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Description'),
-                onChanged: (value) {
-                  currentTaskStore.setDescription(value);
-                },
-              );
-            }),
-          ),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SizedBox(
+                    height: 30,
+                    child: Observer(builder: (_) {
+                      return TextField(
+                        controller: TextEditingController()
+                          ..text = currentTaskStore.name,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(), labelText: 'Task'),
+                        onChanged: (value) {
+                          currentTaskStore.setName(value);
+                        },
+                      );
+                    }),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SizedBox(
+                    height: 30,
+                    child: Observer(builder: (_) {
+                      return TextField(
+                        controller: TextEditingController()
+                          ..text = currentTaskStore.description,
+                        textAlign: TextAlign.left,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Description'),
+                        onChanged: (value) {
+                          currentTaskStore.setDescription(value);
+                        },
+                      );
+                    }),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(),
+                ),
+                Container(
+                  alignment: Alignment.bottomRight,
+                  child: InkWell(
+                    onTap: () {
+                      Task task = Task();
+                      task.name = currentTaskStore.name;
+                      task.description = currentTaskStore.description;
+                      taskRepository.putTask(task);
+                      Navigator.restorablePushNamedAndRemoveUntil(context, '/', (route) => false);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(13),
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius:
+                            BorderRadius.horizontal(left: Radius.circular(30)),
+                      ),
+                      alignment: Alignment.bottomRight,
+                      child: const Text("Complete"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
+
+/*
+   
+*/

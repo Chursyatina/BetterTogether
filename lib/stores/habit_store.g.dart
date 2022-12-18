@@ -13,11 +13,11 @@ mixin _$HabitRepository on _HabitRepositoryBase, Store {
       ActionController(name: '_HabitRepositoryBase', context: context);
 
   @override
-  void setNewList(List<Habit> newBooks) {
+  void setNewList(List<Habit> newHabits) {
     final _$actionInfo = _$_HabitRepositoryBaseActionController.startAction(
         name: '_HabitRepositoryBase.setNewList');
     try {
-      return super.setNewList(newBooks);
+      return super.setNewList(newHabits);
     } finally {
       _$_HabitRepositoryBaseActionController.endAction(_$actionInfo);
     }

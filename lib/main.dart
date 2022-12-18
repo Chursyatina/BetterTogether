@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, unnecessary_new
+import 'package:bettertogether/app.dart';
 import 'package:bettertogether/pages/Home/home.dart';
 import 'package:bettertogether/service_locator.dart';
 import 'package:calendar_view/calendar_view.dart';
@@ -20,12 +21,6 @@ Future<void> main() async {
 
   runApp(CalendarControllerProvider(
     controller:  EventController(),
-    child: MaterialApp(
-        theme: getTheme(),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => HomePage(),
-        },
-      ),
-  ));
+    child: const App()
+  ),);
 }

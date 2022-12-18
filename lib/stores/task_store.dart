@@ -12,10 +12,10 @@ abstract class _TaskRepositoryBase with Store {
   ObservableList<Task> tasks = ObservableList<Task>.of([]);
 
   _TaskRepositoryBase(this.store, this.userRepository) {
-    getBooks(store).forEach(setNewList);
+    getTasks(store).forEach(setNewList);
   }
 
-  Stream<List<Task>> getBooks(box.Store store) {
+  Stream<List<Task>> getTasks(box.Store store) {
     final query = store
     .box<Task>()
     .query(box.Task_.user.equals(userRepository.currentUser.id));
@@ -30,12 +30,12 @@ abstract class _TaskRepositoryBase with Store {
     tasks.addAll(newBooks);
   }
 
-  void putHabit(Task habit) {
-    habit.user.target = userRepository.currentUser;
-    store.box<Task>().put(habit);
+  void putTask(Task task) {
+    task.user.target = userRepository.currentUser;
+    store.box<Task>().put(task);
   }
 
-  void removeHabit(Task habit) {
-    store.box<Task>().remove(habit.id);
+  void removeTask(Task task) {
+    store.box<Task>().remove(task.id);
   }
 }

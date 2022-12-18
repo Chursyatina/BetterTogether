@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> screen = <Widget>[
     const DayScreen(),
     const CalendarScreen(),
-    const TaskScreen(),
+    const ProfileScreen(),
   ];
   int currentIndex = 0;
   CalendarFormat _calendarFormat = CalendarFormat.week;
