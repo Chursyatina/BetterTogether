@@ -30,10 +30,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
         CalendarEventData event = CalendarEventData(
             title: element.name!,
             date: element.date!,
-            startTime: DateTime.now(),
-            endTime: DateTime.now().add(const Duration(hours: 2)),
+            endDate: element.endDate,
+            startTime: element.startTime,
+            endTime: element.endTime,
             event: element.id,
-            endDate: element.date);
+            color: element.color!);
 
         controller.add(event);
       });
@@ -57,7 +58,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey,
-          toolbarHeight: 10,
+          toolbarHeight: 0,
           bottom: const TabBar(
             tabs: [
               Tab(

@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
 import 'package:bettertogether/service_locator.dart';
 import 'package:bettertogether/stores/current_day_store.dart';
+import 'package:bettertogether/stores/current_task_store.dart';
 import 'package:bettertogether/stores/habit_store.dart';
 import 'package:bettertogether/stores/task_store.dart';
 import 'package:bettertogether/stores/user_store.dart';
@@ -30,6 +33,9 @@ class _DayScreenState extends State<DayScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    
+    CurrentTaskStore currentTaskStore = context.read<CurrentTaskStore>();
+    currentTaskStore.nullStore();
 
     currentDayStore.setCurrentDay(DateTime.now());
   }
@@ -39,7 +45,7 @@ class _DayScreenState extends State<DayScreen> {
     UserRepository userRepository = context.read<UserRepository>();
     TaskRepository taskRepository = context.read<TaskRepository>();
     HabitRepository habitRepository = context.read<HabitRepository>();
-
+    CurrentTaskStore currentTaskStore = context.read<CurrentTaskStore>();
 
     return Scaffold(
       body: SlidingUpPanel(
@@ -60,18 +66,30 @@ class _DayScreenState extends State<DayScreen> {
             return ListView.builder(
                 itemCount: currentDayStore.tasks.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Dismissible(
-                    key: Key(currentDayStore.tasks[index].id.toString()),
-                    child: Card(
-                      child: ListTile(
-                          title: Text(
-                              currentDayStore.tasks[index].name.toString())),
-                    ),
-                    onDismissed: (direction) {
-                      Task removable = currentDayStore.tasks[index];
-                      currentDayStore.tasks.remove(removable);
-                      taskRepository.removeTask(removable);
+                  return InkWell(
+                    onTap: () {
+                      currentTaskStore.setName(currentDayStore.tasks[index].name!);
+                      currentTaskStore.setDescription(currentDayStore.tasks[index].description!);
+                      currentTaskStore.setDate(currentDayStore.tasks[index].date!);
+                      currentTaskStore.setStartTime(currentDayStore.tasks[index].startTime!);
+                      currentTaskStore.setEndTime(currentDayStore.tasks[index].endTime!);
+                      currentTaskStore.setId(currentDayStore.tasks[index].id);
+
+                      Navigator.pushNamed(context, '/single');
                     },
+                    child: Dismissible(
+                      key: Key(currentDayStore.tasks[index].id.toString()),
+                      child: Card(
+                        child: ListTile(
+                            title: Text(
+                                currentDayStore.tasks[index].name.toString())),
+                      ),
+                      onDismissed: (direction) {
+                        Task removable = currentDayStore.tasks[index];
+                        currentDayStore.tasks.remove(removable);
+                        taskRepository.removeTask(removable);
+                      },
+                    ),
                   );
                 });
           }),

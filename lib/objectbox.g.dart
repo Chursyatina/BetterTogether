@@ -46,7 +46,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(2, 7116827888848056939),
       name: 'Task',
-      lastPropertyId: const IdUid(7, 406074836850048277),
+      lastPropertyId: const IdUid(10, 7627628902150890283),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -85,7 +85,22 @@ final _entities = <ModelEntity>[
             type: 11,
             flags: 520,
             indexId: const IdUid(2, 6236409523386629376),
-            relationTarget: 'User')
+            relationTarget: 'User'),
+        ModelProperty(
+            id: const IdUid(8, 615006387648795086),
+            name: 'endDate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 2968398809047089199),
+            name: 'startTime',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 7627628902150890283),
+            name: 'endTime',
+            type: 10,
+            flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -225,7 +240,7 @@ ModelDefinition getObjectBoxModel() {
               : fbb.writeList(object.subtasks!
                   .map(fbb.writeString)
                   .toList(growable: false));
-          fbb.startTable(8);
+          fbb.startTable(11);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addOffset(2, descriptionOffset);
@@ -233,6 +248,9 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(4, subtasksOffset);
           fbb.addBool(5, object.isDone);
           fbb.addInt64(6, object.user.targetId);
+          fbb.addInt64(7, object.endDate?.millisecondsSinceEpoch);
+          fbb.addInt64(8, object.startTime?.millisecondsSinceEpoch);
+          fbb.addInt64(9, object.endTime?.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -241,6 +259,12 @@ ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
           final dateValue =
               const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 10);
+          final endDateValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
+          final startTimeValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 20);
+          final endTimeValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 22);
           final object = Task()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..name = const fb.StringReader(asciiOptimization: true)
@@ -255,7 +279,16 @@ ModelDefinition getObjectBoxModel() {
                     lazy: false)
                 .vTableGetNullable(buffer, rootOffset, 12)
             ..isDone =
-                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14);
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14)
+            ..endDate = endDateValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(endDateValue)
+            ..startTime = startTimeValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(startTimeValue)
+            ..endTime = endTimeValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(endTimeValue);
           object.user.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0);
           object.user.attach(store);
@@ -342,6 +375,16 @@ class Task_ {
   /// see [Task.user]
   static final user =
       QueryRelationToOne<Task, User>(_entities[1].properties[6]);
+
+  /// see [Task.endDate]
+  static final endDate = QueryIntegerProperty<Task>(_entities[1].properties[7]);
+
+  /// see [Task.startTime]
+  static final startTime =
+      QueryIntegerProperty<Task>(_entities[1].properties[8]);
+
+  /// see [Task.endTime]
+  static final endTime = QueryIntegerProperty<Task>(_entities[1].properties[9]);
 }
 
 /// [Habit] entity fields to define ObjectBox queries.

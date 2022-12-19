@@ -21,5 +21,5 @@ getIt.registerSingletonWithDependencies<HabitRepository>(() => HabitRepository(g
 
 getIt.registerSingletonWithDependencies<CurrentDayStore>(() => CurrentDayStore(getIt<TaskRepository>(), getIt<HabitRepository>()), dependsOn: [TaskRepository, HabitRepository]);
 
-getIt.registerSingletonWithDependencies<CurrentTaskStore>(() => CurrentTaskStore());
+getIt.registerSingleton<CurrentTaskStore>(CurrentTaskStore());
 }

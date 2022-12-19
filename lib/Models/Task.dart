@@ -1,4 +1,6 @@
 import 'package:bettertogether/Models/User.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -11,6 +13,14 @@ class Task {
   String? description;
 
   DateTime? date;
+
+  DateTime? endDate;
+
+  DateTime? startTime;
+
+  DateTime? endTime;
+
+  Color? color = Colors.blue;
 
   List<String>? subtasks;
 

@@ -4,6 +4,7 @@ import 'package:bettertogether/Models/User.dart';
 import 'package:bettertogether/pages/Home/Screens/task.dart';
 import 'package:bettertogether/pages/Home/home.dart';
 import 'package:bettertogether/service_locator.dart';
+import 'package:bettertogether/stores/current_task_store.dart';
 import 'package:bettertogether/stores/habit_store.dart';
 import 'package:bettertogether/stores/task_store.dart';
 import 'package:bettertogether/stores/user_store.dart';
@@ -23,6 +24,7 @@ class _AppState extends State<App> {
   final UserRepository _userRepository = getIt<UserRepository>();
   final TaskRepository _taskRepository = getIt<TaskRepository>();
   final HabitRepository _habitRepository = getIt<HabitRepository>();
+  final CurrentTaskStore _currentTaskStore = getIt<CurrentTaskStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class _AppState extends State<App> {
         Provider<UserRepository>(create: (_) => _userRepository),
         Provider<TaskRepository>(create: (_) => _taskRepository),
         Provider<HabitRepository>(create: (_) => _habitRepository),
+        Provider<CurrentTaskStore>(create: (_) => _currentTaskStore),
       ],
       child: MaterialApp(
           initialRoute: '/',

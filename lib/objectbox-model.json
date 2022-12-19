@@ -24,7 +24,7 @@
     },
     {
       "id": "2:7116827888848056939",
-      "lastPropertyId": "7:406074836850048277",
+      "lastPropertyId": "10:7627628902150890283",
       "name": "Task",
       "properties": [
         {
@@ -65,6 +65,21 @@
           "flags": 520,
           "indexId": "2:6236409523386629376",
           "relationTarget": "User"
+        },
+        {
+          "id": "8:615006387648795086",
+          "name": "endDate",
+          "type": 10
+        },
+        {
+          "id": "9:2968398809047089199",
+          "name": "startTime",
+          "type": 10
+        },
+        {
+          "id": "10:7627628902150890283",
+          "name": "endTime",
+          "type": 10
         }
       ],
       "relations": []
