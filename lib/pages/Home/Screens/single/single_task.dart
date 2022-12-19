@@ -102,7 +102,7 @@ class _SingleTaskState extends State<SingleTask> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 20),
             child: TextFormField(
               controller: _nameController,
               decoration: AppConstants.inputDecoration.copyWith(

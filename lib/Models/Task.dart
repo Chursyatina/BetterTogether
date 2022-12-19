@@ -5,6 +5,11 @@ import 'package:objectbox/objectbox.dart';
 
 @Entity()
 class Task {
+  Task(){
+    isDone = false;
+    color = Colors.blue;
+  }
+
   @Id()
   int id = 0;
 
@@ -20,7 +25,7 @@ class Task {
 
   DateTime? endTime;
 
-  Color? color = Colors.blue;
+  Color? color;
 
   List<String>? subtasks;
 

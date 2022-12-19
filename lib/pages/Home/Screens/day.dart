@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:bettertogether/Core/extensions.dart';
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
 import 'package:bettertogether/service_locator.dart';
@@ -11,6 +12,7 @@ import 'package:bettertogether/stores/user_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:msh_checkbox/msh_checkbox.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -33,7 +35,7 @@ class _DayScreenState extends State<DayScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    
+
     CurrentTaskStore currentTaskStore = context.read<CurrentTaskStore>();
     currentTaskStore.nullStore();
 
@@ -68,21 +70,75 @@ class _DayScreenState extends State<DayScreen> {
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      currentTaskStore.setName(currentDayStore.tasks[index].name!);
-                      currentTaskStore.setDescription(currentDayStore.tasks[index].description!);
-                      currentTaskStore.setDate(currentDayStore.tasks[index].date!);
-                      currentTaskStore.setStartTime(currentDayStore.tasks[index].startTime!);
-                      currentTaskStore.setEndTime(currentDayStore.tasks[index].endTime!);
+                      currentTaskStore
+                          .setName(currentDayStore.tasks[index].name!);
+                      currentTaskStore.setDescription(
+                          currentDayStore.tasks[index].description!);
+                      currentTaskStore
+                          .setDate(currentDayStore.tasks[index].date!);
+                      currentTaskStore.setStartTime(
+                          currentDayStore.tasks[index].startTime!);
+                      currentTaskStore
+                          .setEndTime(currentDayStore.tasks[index].endTime!);
                       currentTaskStore.setId(currentDayStore.tasks[index].id);
 
                       Navigator.pushNamed(context, '/single');
                     },
                     child: Dismissible(
                       key: Key(currentDayStore.tasks[index].id.toString()),
-                      child: Card(
-                        child: ListTile(
-                            title: Text(
-                                currentDayStore.tasks[index].name.toString())),
+                      child: Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Card(
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Container(
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: MSHCheckbox(
+                                      size: 30,
+                                      value: currentDayStore.tasks[index].isDone!,
+                                      colorConfig: MSHColorConfig
+                                          .fromCheckedUncheckedDisabled(
+                                        checkedColor: Colors.blue,
+                                      ),
+                                      style: MSHCheckboxStyle.stroke,
+                                      onChanged: (selected) {
+                                        setState(() {
+                                          currentDayStore.tasks[index].isDone =
+                                              !currentDayStore
+                                                  .tasks[index].isDone!;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Text(currentDayStore.tasks[index].name
+                                            .toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: Text(currentDayStore.tasks[index].startTime!
+                                                .getTimeInFormat(
+                                                    TimeStampFormat.parse_12) +
+                                            " - " +
+                                            currentDayStore.tasks[index].endTime!
+                                                .getTimeInFormat(
+                                                    TimeStampFormat.parse_12), style: TextStyle(fontSize: 12),),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                       onDismissed: (direction) {
                         Task removable = currentDayStore.tasks[index];
