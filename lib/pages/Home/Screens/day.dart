@@ -3,8 +3,10 @@ import 'dart:ffi';
 import 'package:bettertogether/Core/extensions.dart';
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
+import 'package:bettertogether/pages/Home/Screens/task.dart';
 import 'package:bettertogether/service_locator.dart';
 import 'package:bettertogether/stores/current_day_store.dart';
+import 'package:bettertogether/stores/current_habit_sttore.dart';
 import 'package:bettertogether/stores/current_task_store.dart';
 import 'package:bettertogether/stores/habit_store.dart';
 import 'package:bettertogether/stores/task_store.dart';
@@ -38,7 +40,8 @@ class _DayScreenState extends State<DayScreen> {
 
     CurrentTaskStore currentTaskStore = context.read<CurrentTaskStore>();
     currentTaskStore.nullStore();
-
+    CurrentHabitStore currentHabitStore = context.read<CurrentHabitStore>();
+    currentHabitStore.nullStore();
     currentDayStore.setCurrentDay(DateTime.now());
   }
 
@@ -48,6 +51,7 @@ class _DayScreenState extends State<DayScreen> {
     TaskRepository taskRepository = context.read<TaskRepository>();
     HabitRepository habitRepository = context.read<HabitRepository>();
     CurrentTaskStore currentTaskStore = context.read<CurrentTaskStore>();
+    CurrentHabitStore currentHabitStore = context.read<CurrentHabitStore>();
 
     return Scaffold(
       body: SlidingUpPanel(
@@ -62,30 +66,58 @@ class _DayScreenState extends State<DayScreen> {
               _calendarFormat = CalendarFormat.month;
             });
           },
-          maxHeight: 410,
+          maxHeight: 415,
           minHeight: 150,
           body: Observer(builder: (_) {
             return ListView.builder(
-                itemCount: currentDayStore.tasks.length,
+                //itemCount: currentDayStore.tasks.length,
+                itemCount: currentDayStore.items.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      currentTaskStore
-                          .setName(currentDayStore.tasks[index].name!);
-                      currentTaskStore.setDescription(
-                          currentDayStore.tasks[index].description!);
-                      currentTaskStore
-                          .setDate(currentDayStore.tasks[index].date!);
-                      currentTaskStore.setStartTime(
-                          currentDayStore.tasks[index].startTime!);
-                      currentTaskStore
-                          .setEndTime(currentDayStore.tasks[index].endTime!);
-                      currentTaskStore.setId(currentDayStore.tasks[index].id);
+                      if (currentDayStore.items[index] is Task) {
+                        Task task = currentDayStore.items[index] as Task;
 
-                      Navigator.pushNamed(context, '/single');
+                        currentTaskStore
+                            .setName(task.name!);
+                        currentTaskStore.setDescription(
+                            task.description!);
+                        currentTaskStore
+                            .setDate(task.date!);
+                        currentTaskStore.setStartTime(
+                            task.startTime!);
+                        currentTaskStore
+                            .setEndTime(task.endTime!);
+                        currentTaskStore.setId(task.id);
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => TaskScreen(num: 0),
+                          ),
+                        );
+                      } else {
+                        Habit habit = currentDayStore.items[index] as Habit;
+                        
+                        currentHabitStore
+                            .setName(habit.name!);
+                        currentHabitStore.setDescription(
+                            habit.description!);
+                        currentHabitStore.setStartTime(
+                            habit.startTime!);
+                        currentHabitStore
+                            .setEndTime(habit.endTime!);
+                        currentHabitStore.setId(habit.id);
+                        currentHabitStore.setDaysOfWeek(habit.getDates());
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => TaskScreen(num: 1),
+                          ),
+                        );
+                      }
                     },
                     child: Dismissible(
-                      key: Key(currentDayStore.tasks[index].id.toString()),
+                      key: Key(currentDayStore.items[index].id.toString()),
                       child: Padding(
                         padding: const EdgeInsets.all(3.0),
                         child: Card(
@@ -99,7 +131,8 @@ class _DayScreenState extends State<DayScreen> {
                                     padding: const EdgeInsets.only(right: 10),
                                     child: MSHCheckbox(
                                       size: 30,
-                                      value: currentDayStore.tasks[index].isDone!,
+                                      value:
+                                          currentDayStore.items[index].isDone!,
                                       colorConfig: MSHColorConfig
                                           .fromCheckedUncheckedDisabled(
                                         checkedColor: Colors.blue,
@@ -107,30 +140,41 @@ class _DayScreenState extends State<DayScreen> {
                                       style: MSHCheckboxStyle.stroke,
                                       onChanged: (selected) {
                                         setState(() {
-                                          currentDayStore.tasks[index].isDone =
+                                          currentDayStore.items[index].isDone =
                                               !currentDayStore
-                                                  .tasks[index].isDone!;
+                                                  .items[index].isDone!;
                                         });
                                       },
                                     ),
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.all(2.0),
-                                        child: Text(currentDayStore.tasks[index].name
-                                            .toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                                        child: Text(
+                                            currentDayStore.items[index].name
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 17)),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(2.0),
-                                        child: Text(currentDayStore.tasks[index].startTime!
-                                                .getTimeInFormat(
-                                                    TimeStampFormat.parse_12) +
-                                            " - " +
-                                            currentDayStore.tasks[index].endTime!
-                                                .getTimeInFormat(
-                                                    TimeStampFormat.parse_12), style: TextStyle(fontSize: 12),),
+                                        child: Text(
+                                          currentDayStore
+                                                  .items[index].startTime!
+                                                  .getTimeInFormat(
+                                                      TimeStampFormat
+                                                          .parse_12) +
+                                              " - " +
+                                              currentDayStore
+                                                  .items[index].endTime!
+                                                  .getTimeInFormat(
+                                                      TimeStampFormat.parse_12),
+                                          style: TextStyle(fontSize: 12),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -141,9 +185,16 @@ class _DayScreenState extends State<DayScreen> {
                         ),
                       ),
                       onDismissed: (direction) {
-                        Task removable = currentDayStore.tasks[index];
-                        currentDayStore.tasks.remove(removable);
-                        taskRepository.removeTask(removable);
+                        if (currentDayStore.items[index] is Task) {
+                          Task removable = currentDayStore.items[index] as Task;
+                          currentDayStore.items.remove(removable);
+                          taskRepository.removeTask(removable);
+                        } else {
+                          Habit removable =
+                              currentDayStore.items[index] as Habit;
+                          currentDayStore.items.remove(removable);
+                          habitRepository.removeHabit(removable);
+                        }
                       },
                     ),
                   );
@@ -163,7 +214,13 @@ class _DayScreenState extends State<DayScreen> {
                       padding: EdgeInsets.all(13),
                       width: 60,
                       decoration: BoxDecoration(
-                        color: Colors.grey,
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 15.0,
+                            color: Colors.grey,
+                          ),
+                        ],
+                        color: Colors.white,
                         borderRadius:
                             BorderRadius.horizontal(left: Radius.circular(30)),
                       ),

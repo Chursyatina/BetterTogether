@@ -14,6 +14,7 @@ import 'package:objectbox/internal.dart'; // generated code can access "internal
 import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'Models/Base.dart';
 import 'Models/Habit.dart';
 import 'Models/Task.dart';
 import 'Models/User.dart';
@@ -107,7 +108,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 1856663112864766613),
       name: 'Habit',
-      lastPropertyId: const IdUid(5, 8052149897784057641),
+      lastPropertyId: const IdUid(18, 176401775258317917),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -126,17 +127,116 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(4, 7364234349509507783),
-            name: 'date',
-            type: 10,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(5, 8052149897784057641),
             name: 'userId',
             type: 11,
             flags: 520,
             indexId: const IdUid(1, 5338340167202547855),
-            relationTarget: 'User')
+            relationTarget: 'User'),
+        ModelProperty(
+            id: const IdUid(6, 4119111323123810179),
+            name: 'dateOfCreation',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 1089598077661357267),
+            name: 'startTime',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 4682484646891987842),
+            name: 'endTime',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 3629020498387677615),
+            name: 'currentScore',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 4793201942120620476),
+            name: 'monday',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 8713208437212602940),
+            name: 'tuesday',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 7651390939439736388),
+            name: 'wednesday',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 6187454398704070539),
+            name: 'thursday',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 8143677314245052727),
+            name: 'friday',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 5951244475804328221),
+            name: 'saturday',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 4749837641472053336),
+            name: 'sunday',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 2974129506608984546),
+            name: 'daysPerWeek',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 176401775258317917),
+            name: 'isDone',
+            type: 1,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(4, 948073570447017226),
+      name: 'Base',
+      lastPropertyId: const IdUid(6, 3283431122098486273),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 1810072202989056898),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 1906124284603879380),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 7744107834829874575),
+            name: 'description',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 204846681986499429),
+            name: 'startTime',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 3542056124046396825),
+            name: 'endTime',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 3283431122098486273),
+            name: 'isDone',
+            type: 1,
+            flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
@@ -162,13 +262,13 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(3, 1856663112864766613),
+      lastEntityId: const IdUid(4, 948073570447017226),
       lastIndexId: const IdUid(2, 6236409523386629376),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [809669189957950587],
+      retiredPropertyUids: const [809669189957950587, 7364234349509507783],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -308,32 +408,122 @@ ModelDefinition getObjectBoxModel() {
           final descriptionOffset = object.description == null
               ? null
               : fbb.writeString(object.description!);
-          fbb.startTable(6);
+          fbb.startTable(19);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addOffset(2, descriptionOffset);
-          fbb.addInt64(3, object.date?.millisecondsSinceEpoch);
           fbb.addInt64(4, object.user.targetId);
+          fbb.addInt64(5, object.dateOfCreation?.millisecondsSinceEpoch);
+          fbb.addInt64(6, object.startTime?.millisecondsSinceEpoch);
+          fbb.addInt64(7, object.endTime?.millisecondsSinceEpoch);
+          fbb.addInt64(8, object.currentScore);
+          fbb.addBool(9, object.monday);
+          fbb.addBool(10, object.tuesday);
+          fbb.addBool(11, object.wednesday);
+          fbb.addBool(12, object.thursday);
+          fbb.addBool(13, object.friday);
+          fbb.addBool(14, object.saturday);
+          fbb.addBool(15, object.sunday);
+          fbb.addBool(16, object.daysPerWeek);
+          fbb.addBool(17, object.isDone);
           fbb.finish(fbb.endTable());
           return object.id;
         },
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-          final dateValue =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 10);
+          final dateOfCreationValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 14);
+          final startTimeValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 16);
+          final endTimeValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
           final object = Habit()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..name = const fb.StringReader(asciiOptimization: true)
                 .vTableGetNullable(buffer, rootOffset, 6)
             ..description = const fb.StringReader(asciiOptimization: true)
                 .vTableGetNullable(buffer, rootOffset, 8)
-            ..date = dateValue == null
+            ..dateOfCreation = dateOfCreationValue == null
                 ? null
-                : DateTime.fromMillisecondsSinceEpoch(dateValue);
+                : DateTime.fromMillisecondsSinceEpoch(dateOfCreationValue)
+            ..startTime = startTimeValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(startTimeValue)
+            ..endTime = endTimeValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(endTimeValue)
+            ..currentScore =
+                const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 20)
+            ..monday =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 22)
+            ..tuesday =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 24)
+            ..wednesday =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 26)
+            ..thursday =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 28)
+            ..friday =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 30)
+            ..saturday =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 32)
+            ..sunday =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 34)
+            ..daysPerWeek =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 36)
+            ..isDone =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 38);
           object.user.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
           object.user.attach(store);
+          return object;
+        }),
+    Base: EntityDefinition<Base>(
+        model: _entities[3],
+        toOneRelations: (Base object) => [],
+        toManyRelations: (Base object) => {},
+        getId: (Base object) => object.id,
+        setId: (Base object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Base object, fb.Builder fbb) {
+          final nameOffset =
+              object.name == null ? null : fbb.writeString(object.name!);
+          final descriptionOffset = object.description == null
+              ? null
+              : fbb.writeString(object.description!);
+          fbb.startTable(7);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, nameOffset);
+          fbb.addOffset(2, descriptionOffset);
+          fbb.addInt64(3, object.startTime?.millisecondsSinceEpoch);
+          fbb.addInt64(4, object.endTime?.millisecondsSinceEpoch);
+          fbb.addBool(5, object.isDone);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final startTimeValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 10);
+          final endTimeValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 12);
+          final object = Base()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..name = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 6)
+            ..description = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 8)
+            ..startTime = startTimeValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(startTimeValue)
+            ..endTime = endTimeValue == null
+                ? null
+                : DateTime.fromMillisecondsSinceEpoch(endTimeValue)
+            ..isDone =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14);
+
           return object;
         })
   };
@@ -399,10 +589,81 @@ class Habit_ {
   static final description =
       QueryStringProperty<Habit>(_entities[2].properties[2]);
 
-  /// see [Habit.date]
-  static final date = QueryIntegerProperty<Habit>(_entities[2].properties[3]);
-
   /// see [Habit.user]
   static final user =
-      QueryRelationToOne<Habit, User>(_entities[2].properties[4]);
+      QueryRelationToOne<Habit, User>(_entities[2].properties[3]);
+
+  /// see [Habit.dateOfCreation]
+  static final dateOfCreation =
+      QueryIntegerProperty<Habit>(_entities[2].properties[4]);
+
+  /// see [Habit.startTime]
+  static final startTime =
+      QueryIntegerProperty<Habit>(_entities[2].properties[5]);
+
+  /// see [Habit.endTime]
+  static final endTime =
+      QueryIntegerProperty<Habit>(_entities[2].properties[6]);
+
+  /// see [Habit.currentScore]
+  static final currentScore =
+      QueryIntegerProperty<Habit>(_entities[2].properties[7]);
+
+  /// see [Habit.monday]
+  static final monday = QueryBooleanProperty<Habit>(_entities[2].properties[8]);
+
+  /// see [Habit.tuesday]
+  static final tuesday =
+      QueryBooleanProperty<Habit>(_entities[2].properties[9]);
+
+  /// see [Habit.wednesday]
+  static final wednesday =
+      QueryBooleanProperty<Habit>(_entities[2].properties[10]);
+
+  /// see [Habit.thursday]
+  static final thursday =
+      QueryBooleanProperty<Habit>(_entities[2].properties[11]);
+
+  /// see [Habit.friday]
+  static final friday =
+      QueryBooleanProperty<Habit>(_entities[2].properties[12]);
+
+  /// see [Habit.saturday]
+  static final saturday =
+      QueryBooleanProperty<Habit>(_entities[2].properties[13]);
+
+  /// see [Habit.sunday]
+  static final sunday =
+      QueryBooleanProperty<Habit>(_entities[2].properties[14]);
+
+  /// see [Habit.daysPerWeek]
+  static final daysPerWeek =
+      QueryBooleanProperty<Habit>(_entities[2].properties[15]);
+
+  /// see [Habit.isDone]
+  static final isDone =
+      QueryBooleanProperty<Habit>(_entities[2].properties[16]);
+}
+
+/// [Base] entity fields to define ObjectBox queries.
+class Base_ {
+  /// see [Base.id]
+  static final id = QueryIntegerProperty<Base>(_entities[3].properties[0]);
+
+  /// see [Base.name]
+  static final name = QueryStringProperty<Base>(_entities[3].properties[1]);
+
+  /// see [Base.description]
+  static final description =
+      QueryStringProperty<Base>(_entities[3].properties[2]);
+
+  /// see [Base.startTime]
+  static final startTime =
+      QueryIntegerProperty<Base>(_entities[3].properties[3]);
+
+  /// see [Base.endTime]
+  static final endTime = QueryIntegerProperty<Base>(_entities[3].properties[4]);
+
+  /// see [Base.isDone]
+  static final isDone = QueryBooleanProperty<Base>(_entities[3].properties[5]);
 }

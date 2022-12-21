@@ -1,3 +1,4 @@
+import 'package:bettertogether/Models/Base.dart';
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
 import 'package:bettertogether/stores/habit_store.dart';
@@ -13,6 +14,9 @@ abstract class _CurrentDayStoreBase with Store {
 
   @observable
   DateTime currentDay = DateTime.now();
+
+  @observable
+  List<Base> items = [];
 
   @observable
   List<Task> tasks = [];
@@ -42,9 +46,12 @@ abstract class _CurrentDayStoreBase with Store {
 
     habits = habitRepository.habits
         .where((element) =>
-            element.date!.year == currentDay.year &&
-            element.date!.month == currentDay.month &&
-            element.date!.day == currentDay.day)
+            element.isDaySelected(currentDay.weekday - 1) &&
+            element.dateOfCreation!.compareTo(currentDay) <= 0)
         .toList();
+
+    items = [];
+    items.addAll(tasks);
+    items.addAll(habits);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bettertogether/stores/current_day_store.dart';
+import 'package:bettertogether/stores/current_habit_sttore.dart';
 import 'package:bettertogether/stores/current_task_store.dart';
 import 'package:bettertogether/stores/habit_store.dart';
 import 'package:bettertogether/stores/task_store.dart';
@@ -22,4 +23,6 @@ getIt.registerSingletonWithDependencies<HabitRepository>(() => HabitRepository(g
 getIt.registerSingletonWithDependencies<CurrentDayStore>(() => CurrentDayStore(getIt<TaskRepository>(), getIt<HabitRepository>()), dependsOn: [TaskRepository, HabitRepository]);
 
 getIt.registerSingleton<CurrentTaskStore>(CurrentTaskStore());
+
+getIt.registerSingleton<CurrentHabitStore>(CurrentHabitStore());
 }

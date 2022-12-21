@@ -25,6 +25,22 @@ mixin _$CurrentDayStore on _CurrentDayStoreBase, Store {
     });
   }
 
+  late final _$itemsAtom =
+      Atom(name: '_CurrentDayStoreBase.items', context: context);
+
+  @override
+  List<Base> get items {
+    _$itemsAtom.reportRead();
+    return super.items;
+  }
+
+  @override
+  set items(List<Base> value) {
+    _$itemsAtom.reportWrite(value, super.items, () {
+      super.items = value;
+    });
+  }
+
   late final _$tasksAtom =
       Atom(name: '_CurrentDayStoreBase.tasks', context: context);
 
@@ -86,6 +102,7 @@ mixin _$CurrentDayStore on _CurrentDayStoreBase, Store {
   String toString() {
     return '''
 currentDay: ${currentDay},
+items: ${items},
 tasks: ${tasks},
 habits: ${habits}
     ''';

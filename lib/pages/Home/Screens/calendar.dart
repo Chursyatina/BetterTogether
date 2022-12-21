@@ -39,14 +39,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
         controller.add(event);
       });
 
-      habitRepository.habits.forEach((element) {
-        CalendarEventData event = CalendarEventData(
-            title: element.name!,
-            date: element.date!,
-            event: element.id,
-            endDate: element.date);
+      DateTime monthLater = DateTime.now().add(Duration(days: 30));
 
-        controller.add(event);
+      habitRepository.habits.forEach((element) {
+        DateTime day = element.dateOfCreation!;
+
+        while (day.compareTo(monthLater) <= 0){
+          if (element.isDaySelected(day.weekday - 1)) {
+            CalendarEventData event = CalendarEventData(
+              title: element.name!,
+              date: day,
+              startTime: element.startTime,
+              endTime: element.endTime,
+              event: element.id,
+              color: Colors.red,
+            );
+
+            controller.add(event);
+          }
+
+          day = day.add(Duration(days: 1));
+        }
       });
     }));
   }

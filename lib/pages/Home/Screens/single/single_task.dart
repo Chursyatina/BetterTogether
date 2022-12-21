@@ -344,6 +344,8 @@ class _SingleTaskState extends State<SingleTask> {
                     taskRepository.tasks[taskRepository.tasks.indexOf(previous)].startTime = task.startTime;
                     taskRepository.tasks[taskRepository.tasks.indexOf(previous)].endTime = task.endTime;
                     taskRepository.tasks[taskRepository.tasks.indexOf(previous)].color = task.color;
+
+                    taskRepository.putTask(taskRepository.tasks[taskRepository.tasks.indexOf(previous)]);
                   }
                   else {
                     taskRepository.putTask(task);

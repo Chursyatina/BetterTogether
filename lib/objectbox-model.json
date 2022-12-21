@@ -86,7 +86,7 @@
     },
     {
       "id": "3:1856663112864766613",
-      "lastPropertyId": "5:8052149897784057641",
+      "lastPropertyId": "18:176401775258317917",
       "name": "Habit",
       "properties": [
         {
@@ -106,23 +106,122 @@
           "type": 9
         },
         {
-          "id": "4:7364234349509507783",
-          "name": "date",
-          "type": 10
-        },
-        {
           "id": "5:8052149897784057641",
           "name": "userId",
           "type": 11,
           "flags": 520,
           "indexId": "1:5338340167202547855",
           "relationTarget": "User"
+        },
+        {
+          "id": "6:4119111323123810179",
+          "name": "dateOfCreation",
+          "type": 10
+        },
+        {
+          "id": "7:1089598077661357267",
+          "name": "startTime",
+          "type": 10
+        },
+        {
+          "id": "8:4682484646891987842",
+          "name": "endTime",
+          "type": 10
+        },
+        {
+          "id": "9:3629020498387677615",
+          "name": "currentScore",
+          "type": 6
+        },
+        {
+          "id": "10:4793201942120620476",
+          "name": "monday",
+          "type": 1
+        },
+        {
+          "id": "11:8713208437212602940",
+          "name": "tuesday",
+          "type": 1
+        },
+        {
+          "id": "12:7651390939439736388",
+          "name": "wednesday",
+          "type": 1
+        },
+        {
+          "id": "13:6187454398704070539",
+          "name": "thursday",
+          "type": 1
+        },
+        {
+          "id": "14:8143677314245052727",
+          "name": "friday",
+          "type": 1
+        },
+        {
+          "id": "15:5951244475804328221",
+          "name": "saturday",
+          "type": 1
+        },
+        {
+          "id": "16:4749837641472053336",
+          "name": "sunday",
+          "type": 1
+        },
+        {
+          "id": "17:2974129506608984546",
+          "name": "daysPerWeek",
+          "type": 1
+        },
+        {
+          "id": "18:176401775258317917",
+          "name": "isDone",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:948073570447017226",
+      "lastPropertyId": "6:3283431122098486273",
+      "name": "Base",
+      "properties": [
+        {
+          "id": "1:1810072202989056898",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1906124284603879380",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:7744107834829874575",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "4:204846681986499429",
+          "name": "startTime",
+          "type": 10
+        },
+        {
+          "id": "5:3542056124046396825",
+          "name": "endTime",
+          "type": 10
+        },
+        {
+          "id": "6:3283431122098486273",
+          "name": "isDone",
+          "type": 1
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "3:1856663112864766613",
+  "lastEntityId": "4:948073570447017226",
   "lastIndexId": "2:6236409523386629376",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
@@ -131,7 +230,8 @@
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
-    809669189957950587
+    809669189957950587,
+    7364234349509507783
   ],
   "retiredRelationUids": [],
   "version": 1

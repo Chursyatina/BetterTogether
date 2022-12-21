@@ -1,9 +1,11 @@
 import 'package:bettertogether/Core/app_colors.dart';
 import 'package:bettertogether/Core/constants.dart';
 import 'package:bettertogether/Core/extensions.dart';
+import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
 import 'package:bettertogether/Wigets/custom_button.dart';
 import 'package:bettertogether/Wigets/date_time_selector.dart';
+import 'package:bettertogether/stores/current_habit_sttore.dart';
 import 'package:bettertogether/stores/current_task_store.dart';
 import 'package:bettertogether/stores/habit_store.dart';
 import 'package:bettertogether/stores/task_store.dart';
@@ -13,6 +15,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
+import 'package:weekday_selector/weekday_selector.dart';
 
 class SingleHabit extends StatefulWidget {
   const SingleHabit({super.key});
@@ -23,9 +26,11 @@ class SingleHabit extends StatefulWidget {
 
 class _SingleHabitState extends State<SingleHabit> {
   final GlobalKey<FormState> _form = GlobalKey();
-  final currentTaskStore = CurrentTaskStore();
+  late CurrentHabitStore currentHabitStore;
 
-  late TextEditingController _startDateController;
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  var daysOfWeek = List.filled(7, true);
   late TextEditingController _startTimeController;
   late TextEditingController _endTimeController;
   late TextEditingController _endDateController;
@@ -34,26 +39,46 @@ class _SingleHabitState extends State<SingleHabit> {
   void initState() {
     super.initState();
 
-    _startDateController = TextEditingController();
-    _startDateController.text =
-        DateTime.now().dateToStringWithFormat(format: "dd/MM/yyyy");
-    currentTaskStore.setDate(DateTime.now());
-
-    _endDateController = TextEditingController();
-    _endDateController.text =
-        DateTime.now().dateToStringWithFormat(format: "dd/MM/yyyy");
-    currentTaskStore.setEndDate(DateTime.now());
-
+    CurrentHabitStore currentHabitStore = context.read<CurrentHabitStore>();
+    _nameController = TextEditingController();
+    _descriptionController = TextEditingController();
     _startTimeController = TextEditingController();
-    _startTimeController.text =
-        DateTime.now().getTimeInFormat(TimeStampFormat.parse_12);
-    currentTaskStore.setStartTime(DateTime.now());
-
     _endTimeController = TextEditingController();
-    _endTimeController.text = DateTime.now()
-        .add(Duration(hours: 1))
-        .getTimeInFormat(TimeStampFormat.parse_12);
-    currentTaskStore.setEndTime(DateTime.now().add(Duration(hours: 1)));
+    _endDateController = TextEditingController();
+
+    if (currentHabitStore.name != null) {
+      _nameController.text = currentHabitStore.name!;
+    }
+
+    if (currentHabitStore.description != null) {
+      _descriptionController.text = currentHabitStore.description!;
+    }
+
+    if (currentHabitStore.startTime != null) {
+      _startTimeController.text =
+          currentHabitStore.startTime!.getTimeInFormat(TimeStampFormat.parse_12);
+    } else {
+      _startTimeController.text =
+          DateTime.now().getTimeInFormat(TimeStampFormat.parse_12);
+      currentHabitStore.setStartTime(DateTime.now());
+    }
+
+    if (currentHabitStore.endTime != null) {
+      _endTimeController.text =
+          currentHabitStore.endTime!.getTimeInFormat(TimeStampFormat.parse_12);
+    } else {
+      _endTimeController.text = DateTime.now()
+          .add(Duration(hours: 1))
+          .getTimeInFormat(TimeStampFormat.parse_12);
+      currentHabitStore.setEndTime(DateTime.now().add(Duration(hours: 1)));
+    }
+
+    if (currentHabitStore.daysOfWeek != null){
+      daysOfWeek = currentHabitStore.daysOfWeek!;
+    }
+    else{
+      daysOfWeek = List.filled(7, true);
+    }
   }
 
   @override
@@ -61,6 +86,7 @@ class _SingleHabitState extends State<SingleHabit> {
     UserRepository userRepository = context.read<UserRepository>();
     TaskRepository taskRepository = context.read<TaskRepository>();
     HabitRepository habitRepository = context.read<HabitRepository>();
+    CurrentHabitStore currentHabitStore = context.read<CurrentHabitStore>();
 
     return Form(
       key: _form,
@@ -68,10 +94,12 @@ class _SingleHabitState extends State<SingleHabit> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding:
+                const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 20),
             child: TextFormField(
+              controller: _nameController,
               decoration: AppConstants.inputDecoration.copyWith(
-                labelText: "Task name",
+                labelText: "Habit name",
               ),
               style: TextStyle(
                 color: AppColors.black,
@@ -79,73 +107,33 @@ class _SingleHabitState extends State<SingleHabit> {
               ),
               validator: (value) {
                 if (value == null || value == "")
-                  return "Please enter task name.";
+                  return "Please habit task name.";
 
                 return null;
               },
               onChanged: (value) {
-                currentTaskStore.setName(value);
+                currentHabitStore.setName(value);
               },
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.next,
             ),
           ),
-          SizedBox(
-            height: 15,
-          ),
           Row(
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8),
-                  child: DateTimeSelectorFormField(
-                    controller: _startDateController,
-                    decoration: AppConstants.inputDecoration.copyWith(
-                      labelText: "Date",
-                    ),
-                    validator: (value) {
-                      if (value == null || value == "")
-                        return "Please select date.";
-
-                      return null;
+                  padding: const EdgeInsets.all(3),
+                  child: WeekdaySelector(
+                    onChanged: (int day) {
+                      setState(() {
+                        final index = day % 7;
+                        daysOfWeek[index] = !daysOfWeek[index];
+                      });
                     },
-                    textStyle: TextStyle(
-                      color: AppColors.black,
-                      fontSize: 17.0,
-                    ),
-                    onSave: (date) {
-                      currentTaskStore.setDate(date);
-                    },
-                    type: DateTimeSelectionType.date,
+                    values: daysOfWeek,
                   ),
                 ),
               ),
-              // SizedBox(width: 20.0),
-              // Expanded(
-              //   child: Padding(
-              //     padding: const EdgeInsets.only(bottom: 8),
-              //     child: DateTimeSelectorFormField(
-              //       controller: _endDateController,
-              //       decoration: AppConstants.inputDecoration.copyWith(
-              //         labelText: "End Date",
-              //       ),
-              //       validator: (value) {
-              //         if (value == null || value == "")
-              //           return "Please select date.";
-
-              //         return null;
-              //       },
-              //       textStyle: TextStyle(
-              //         color: AppColors.black,
-              //         fontSize: 17.0,
-              //       ),
-              //       onSave: (date) {
-              //         currentTaskStore.setEndDate(date);
-              //       },
-              //       type: DateTimeSelectionType.date,
-              //     ),
-              //   ),
-              // ),
             ],
           ),
           Row(
@@ -165,7 +153,7 @@ class _SingleHabitState extends State<SingleHabit> {
                       return null;
                     },
                     onSave: (time) {
-                      currentTaskStore.setStartTime(time);
+                      currentHabitStore.setStartTime(time);
                     },
                     textStyle: TextStyle(
                       color: AppColors.black,
@@ -191,7 +179,7 @@ class _SingleHabitState extends State<SingleHabit> {
                       return null;
                     },
                     onSave: (time) {
-                      currentTaskStore.setEndTime(time);
+                      currentHabitStore.setEndTime(time);
                     },
                     textStyle: TextStyle(
                       color: AppColors.black,
@@ -210,6 +198,7 @@ class _SingleHabitState extends State<SingleHabit> {
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               //focusNode: _descriptionNode,
+              controller: _descriptionController,
               decoration: AppConstants.inputDecoration.copyWith(
                 labelText: "Event Description",
               ),
@@ -230,7 +219,7 @@ class _SingleHabitState extends State<SingleHabit> {
                 return null;
               },
               onChanged: (value) {
-                currentTaskStore.setDescription(value);
+                currentHabitStore.setDescription(value);
               },
             ),
           ),
@@ -268,37 +257,52 @@ class _SingleHabitState extends State<SingleHabit> {
 
                   _form.currentState?.save();
 
-                  Task task = Task();
-                  task.name = currentTaskStore.name;
-                  task.description = currentTaskStore.description;
-                  task.date = currentTaskStore.date;
-                  if (currentTaskStore.endDate!.month >
-                          currentTaskStore.endDate!.month ||
-                      currentTaskStore.endDate!.day >
-                          currentTaskStore.endDate!.day) {
-                    task.endDate = currentTaskStore.endDate;
-                  } else {
-                    task.endDate = currentTaskStore.date;
-                  }
+                  Habit habit = Habit();
+                  habit.name = currentHabitStore.name;
+                  habit.description = currentHabitStore.description;
 
-                  task.startTime = currentTaskStore.startTime;
+                  habit.startTime = currentHabitStore.startTime;
 
-                  if (currentTaskStore.startTime!.day !=
-                          currentTaskStore.endTime!.day ||
-                      currentTaskStore.startTime!.day !=
-                          currentTaskStore.endTime!.day ||
-                      currentTaskStore.startTime!.minute -
-                              currentTaskStore.endTime!.minute >
+                  if (currentHabitStore.startTime!.day !=
+                          currentHabitStore.endTime!.day ||
+                      currentHabitStore.startTime!.hour !=
+                          currentHabitStore.endTime!.hour ||
+                      currentHabitStore.startTime!.minute -
+                              currentHabitStore.endTime!.minute >
                           4) {
-                    task.endTime = currentTaskStore.endTime;
+                    habit.endTime = currentHabitStore.endTime;
                   } else {
-                    task.endTime =
-                        currentTaskStore.endTime!.add(Duration(hours: 1));
+                    habit.endTime =
+                        currentHabitStore.endTime!.add(Duration(hours: 1));
                   }
 
-                  task.color = currentTaskStore.color;
+                  habit.color = Colors.blue;
 
-                  taskRepository.putTask(task);
+                  habit.setDaysOfWeek(daysOfWeek);
+
+                  if (currentHabitStore.id != null) {
+                    Habit previous = habitRepository.habits.firstWhere(
+                        (element) => element.id == currentHabitStore.id);
+                    habitRepository.habits[habitRepository.habits.indexOf(previous)]
+                        .name = habit.name;
+                    habitRepository.habits[habitRepository.habits.indexOf(previous)]
+                        .description = habit.description;
+                    habitRepository.habits[habitRepository.habits.indexOf(previous)]
+                        .startTime = habit.startTime;
+                    habitRepository.habits[habitRepository.habits.indexOf(previous)]
+                        .endTime = habit.endTime;
+                    habitRepository.habits[habitRepository.habits.indexOf(previous)]
+                        .setDaysOfWeek(daysOfWeek);
+                    habitRepository.habits[habitRepository.habits.indexOf(previous)]
+                        .color = habit.color;
+                      
+                    habitRepository.putHabit(habitRepository.habits[habitRepository.habits.indexOf(previous)]);
+                  } else {
+                    habit.recalculateHabit();
+                    habitRepository.putHabit(habit);
+                  }
+
+                  currentHabitStore.nullStore();
 
                   _resetForm();
 
@@ -369,7 +373,7 @@ class _SingleHabitState extends State<SingleHabit> {
                 onTap: () {
                   if (mounted)
                     setState(() {
-                      currentTaskStore.setColor(color);
+                      currentHabitStore.setColor(color);
                     });
                   context.pop();
                 },
@@ -383,7 +387,6 @@ class _SingleHabitState extends State<SingleHabit> {
 
   void _resetForm() {
     _form.currentState?.reset();
-    _startDateController.text = "";
     _endTimeController.text = "";
     _startTimeController.text = "";
   }
