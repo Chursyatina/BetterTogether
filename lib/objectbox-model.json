@@ -172,11 +172,6 @@
           "id": "17:2974129506608984546",
           "name": "daysPerWeek",
           "type": 1
-        },
-        {
-          "id": "18:176401775258317917",
-          "name": "isDone",
-          "type": 1
         }
       ],
       "relations": []
@@ -219,10 +214,42 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "5:3000870703068504177",
+      "lastPropertyId": "4:3494356813124423183",
+      "name": "DayMark",
+      "properties": [
+        {
+          "id": "1:1617226840158225028",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5013991049820607499",
+          "name": "isDone",
+          "type": 1
+        },
+        {
+          "id": "3:4971228023269745209",
+          "name": "date",
+          "type": 10
+        },
+        {
+          "id": "4:3494356813124423183",
+          "name": "habitId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "3:1115499276835258773",
+          "relationTarget": "Habit"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "4:948073570447017226",
-  "lastIndexId": "2:6236409523386629376",
+  "lastEntityId": "5:3000870703068504177",
+  "lastIndexId": "3:1115499276835258773",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -231,7 +258,8 @@
   "retiredIndexUids": [],
   "retiredPropertyUids": [
     809669189957950587,
-    7364234349509507783
+    7364234349509507783,
+    176401775258317917
   ],
   "retiredRelationUids": [],
   "version": 1

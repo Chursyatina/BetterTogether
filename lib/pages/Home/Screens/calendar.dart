@@ -34,7 +34,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             startTime: element.startTime,
             endTime: element.endTime,
             event: element.id,
-            color: element.color!);
+            color: !element.isDone!? element.color! : Colors.grey);
 
         controller.add(event);
       });
@@ -52,7 +52,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               startTime: element.startTime,
               endTime: element.endTime,
               event: element.id,
-              color: Colors.red,
+              color: !element.isDoneForDay(day)? Colors.red: Colors.grey,
             );
 
             controller.add(event);

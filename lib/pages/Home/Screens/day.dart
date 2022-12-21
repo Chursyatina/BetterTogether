@@ -1,8 +1,10 @@
 import 'dart:ffi';
 
 import 'package:bettertogether/Core/extensions.dart';
+import 'package:bettertogether/Models/DayMark.dart';
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
+import 'package:bettertogether/Wigets/my_card.dart';
 import 'package:bettertogether/pages/Home/Screens/task.dart';
 import 'package:bettertogether/service_locator.dart';
 import 'package:bettertogether/stores/current_day_store.dart';
@@ -31,13 +33,14 @@ class _DayScreenState extends State<DayScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
-  CurrentDayStore currentDayStore = getIt<CurrentDayStore>();
+  late CurrentDayStore currentDayStore;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
+    currentDayStore = context.read<CurrentDayStore>();
     CurrentTaskStore currentTaskStore = context.read<CurrentTaskStore>();
     currentTaskStore.nullStore();
     CurrentHabitStore currentHabitStore = context.read<CurrentHabitStore>();
@@ -73,131 +76,7 @@ class _DayScreenState extends State<DayScreen> {
                 //itemCount: currentDayStore.tasks.length,
                 itemCount: currentDayStore.items.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    onTap: () {
-                      if (currentDayStore.items[index] is Task) {
-                        Task task = currentDayStore.items[index] as Task;
-
-                        currentTaskStore
-                            .setName(task.name!);
-                        currentTaskStore.setDescription(
-                            task.description!);
-                        currentTaskStore
-                            .setDate(task.date!);
-                        currentTaskStore.setStartTime(
-                            task.startTime!);
-                        currentTaskStore
-                            .setEndTime(task.endTime!);
-                        currentTaskStore.setId(task.id);
-
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => TaskScreen(num: 0),
-                          ),
-                        );
-                      } else {
-                        Habit habit = currentDayStore.items[index] as Habit;
-                        
-                        currentHabitStore
-                            .setName(habit.name!);
-                        currentHabitStore.setDescription(
-                            habit.description!);
-                        currentHabitStore.setStartTime(
-                            habit.startTime!);
-                        currentHabitStore
-                            .setEndTime(habit.endTime!);
-                        currentHabitStore.setId(habit.id);
-                        currentHabitStore.setDaysOfWeek(habit.getDates());
-
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => TaskScreen(num: 1),
-                          ),
-                        );
-                      }
-                    },
-                    child: Dismissible(
-                      key: Key(currentDayStore.items[index].id.toString()),
-                      child: Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Card(
-                          elevation: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Container(
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: MSHCheckbox(
-                                      size: 30,
-                                      value:
-                                          currentDayStore.items[index].isDone!,
-                                      colorConfig: MSHColorConfig
-                                          .fromCheckedUncheckedDisabled(
-                                        checkedColor: Colors.blue,
-                                      ),
-                                      style: MSHCheckboxStyle.stroke,
-                                      onChanged: (selected) {
-                                        setState(() {
-                                          currentDayStore.items[index].isDone =
-                                              !currentDayStore
-                                                  .items[index].isDone!;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Text(
-                                            currentDayStore.items[index].name
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 17)),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Text(
-                                          currentDayStore
-                                                  .items[index].startTime!
-                                                  .getTimeInFormat(
-                                                      TimeStampFormat
-                                                          .parse_12) +
-                                              " - " +
-                                              currentDayStore
-                                                  .items[index].endTime!
-                                                  .getTimeInFormat(
-                                                      TimeStampFormat.parse_12),
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      onDismissed: (direction) {
-                        if (currentDayStore.items[index] is Task) {
-                          Task removable = currentDayStore.items[index] as Task;
-                          currentDayStore.items.remove(removable);
-                          taskRepository.removeTask(removable);
-                        } else {
-                          Habit removable =
-                              currentDayStore.items[index] as Habit;
-                          currentDayStore.items.remove(removable);
-                          habitRepository.removeHabit(removable);
-                        }
-                      },
-                    ),
-                  );
+                  return MyCard(base: currentDayStore.items[index], currentDay: currentDayStore.currentDay,);
                 });
           }),
           panel: Container(

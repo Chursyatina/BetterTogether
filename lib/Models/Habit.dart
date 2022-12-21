@@ -1,4 +1,5 @@
 import 'package:bettertogether/Models/Base.dart';
+import 'package:bettertogether/Models/DayMark.dart';
 import 'package:flutter/material.dart';
 import 'package:objectbox/objectbox.dart';
 
@@ -9,7 +10,6 @@ class Habit extends Base {
   Habit() {
     color = Colors.blue;
     dateOfCreation = DateTime.now();
-    isDone = false;
   }
 
   @Id()
@@ -24,8 +24,6 @@ class Habit extends Base {
   DateTime? startTime;
 
   DateTime? endTime;
-
-  bool? isDone;
 
   List<bool>? daysOfWeek = [];
 
@@ -47,6 +45,9 @@ class Habit extends Base {
   int? currentScore;
 
   final user = ToOne<User>();
+
+  @Backlink('habit')
+  final dayMarks = ToMany<DayMark>();
 
   void setDaysOfWeek(List<bool> daysOfWeek) {
     for (int i = 0; i < 7; i++) {
@@ -74,7 +75,7 @@ class Habit extends Base {
     }
   }
 
-  List<bool> getDates(){
+  List<bool> getDates() {
     daysOfWeek = List<bool>.filled(7, true);
     for (int i = 0; i < 7; i++) {
       if (i == 0) {
@@ -157,6 +158,57 @@ class Habit extends Base {
         currentScore = currentScore! + 1;
         continue;
       }
+    }
+  }
+
+  bool isDoneForDay(DateTime dateTime) {
+
+    if (isDayMarkExists(dateTime)) {
+      return dayMarks
+          .firstWhere((element) =>
+              element.date!.year == dateTime.year &&
+              element.date!.month == dateTime.month &&
+              element.date!.day == dateTime.day)
+          .isDone!;
+    } else {
+      return false;
+    }
+  }
+
+  void changeDoneForDay(DateTime dateTime) {
+
+    if (isDayMarkExists(dateTime)) {
+      dayMarks
+              .firstWhere((element) =>
+                  element.date!.year == dateTime.year &&
+                  element.date!.month == dateTime.month &&
+                  element.date!.day == dateTime.day)
+              .isDone =
+          !dayMarks
+              .firstWhere((element) =>
+                  element.date!.year == dateTime.year &&
+                  element.date!.month == dateTime.month &&
+                  element.date!.day == dateTime.day)
+              .isDone!;
+    }
+  }
+
+  bool isDayMarkExists(DateTime dateTime) {
+    DayMark unrealDayMark = DayMark(DateTime.utc(1900));
+
+    if (dayMarks
+            .firstWhere(
+                (element) =>
+                    element.date!.year == dateTime.year &&
+                    element.date!.month == dateTime.month &&
+                    element.date!.day == dateTime.day,
+                orElse: () => unrealDayMark)
+            .date!
+            .year !=
+        DateTime.utc(1900).year) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

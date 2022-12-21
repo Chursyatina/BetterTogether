@@ -4,6 +4,7 @@ import 'package:bettertogether/Models/User.dart';
 import 'package:bettertogether/pages/Home/Screens/task.dart';
 import 'package:bettertogether/pages/Home/home.dart';
 import 'package:bettertogether/service_locator.dart';
+import 'package:bettertogether/stores/current_day_store.dart';
 import 'package:bettertogether/stores/current_habit_sttore.dart';
 import 'package:bettertogether/stores/current_task_store.dart';
 import 'package:bettertogether/stores/habit_store.dart';
@@ -27,6 +28,7 @@ class _AppState extends State<App> {
   final HabitRepository _habitRepository = getIt<HabitRepository>();
   final CurrentTaskStore _currentTaskStore = getIt<CurrentTaskStore>();
   final CurrentHabitStore _currentHabitStore = getIt<CurrentHabitStore>();
+  final CurrentDayStore _currentDayStore = getIt<CurrentDayStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +39,16 @@ class _AppState extends State<App> {
         Provider<HabitRepository>(create: (_) => _habitRepository),
         Provider<CurrentTaskStore>(create: (_) => _currentTaskStore),
         Provider<CurrentHabitStore>(create: (_) => _currentHabitStore),
+        Provider<CurrentDayStore>(create: (_) => _currentDayStore),
       ],
       child: MaterialApp(
-          initialRoute: '/',
-          routes: {
-            '/': (context) => HomePage(),
-            '/single': (context) => TaskScreen(num: 0)
-          },
-        ),
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => HomePage(),
+          '/single': (context) => TaskScreen(num: 0)
+        },
+      ),
     );
   }
 }

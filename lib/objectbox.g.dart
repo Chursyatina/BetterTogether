@@ -15,6 +15,7 @@ import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'Models/Base.dart';
+import 'Models/DayMark.dart';
 import 'Models/Habit.dart';
 import 'Models/Task.dart';
 import 'Models/User.dart';
@@ -192,15 +193,12 @@ final _entities = <ModelEntity>[
             id: const IdUid(17, 2974129506608984546),
             name: 'daysPerWeek',
             type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 176401775258317917),
-            name: 'isDone',
-            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
+      backlinks: <ModelBacklink>[
+        ModelBacklink(name: 'dayMarks', srcEntity: 'DayMark', srcField: 'habit')
+      ]),
   ModelEntity(
       id: const IdUid(4, 948073570447017226),
       name: 'Base',
@@ -239,6 +237,37 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(5, 3000870703068504177),
+      name: 'DayMark',
+      lastPropertyId: const IdUid(4, 3494356813124423183),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 1617226840158225028),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 5013991049820607499),
+            name: 'isDone',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 4971228023269745209),
+            name: 'date',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 3494356813124423183),
+            name: 'habitId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(3, 1115499276835258773),
+            relationTarget: 'Habit')
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -262,13 +291,17 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(4, 948073570447017226),
-      lastIndexId: const IdUid(2, 6236409523386629376),
+      lastEntityId: const IdUid(5, 3000870703068504177),
+      lastIndexId: const IdUid(3, 1115499276835258773),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [809669189957950587, 7364234349509507783],
+      retiredPropertyUids: const [
+        809669189957950587,
+        7364234349509507783,
+        176401775258317917
+      ],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -397,7 +430,11 @@ ModelDefinition getObjectBoxModel() {
     Habit: EntityDefinition<Habit>(
         model: _entities[2],
         toOneRelations: (Habit object) => [object.user],
-        toManyRelations: (Habit object) => {},
+        toManyRelations: (Habit object) => {
+              RelInfo<DayMark>.toOneBacklink(
+                      4, object.id, (DayMark srcObject) => srcObject.habit):
+                  object.dayMarks
+            },
         getId: (Habit object) => object.id,
         setId: (Habit object, int id) {
           object.id = id;
@@ -425,7 +462,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(14, object.saturday);
           fbb.addBool(15, object.sunday);
           fbb.addBool(16, object.daysPerWeek);
-          fbb.addBool(17, object.isDone);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -470,12 +506,16 @@ ModelDefinition getObjectBoxModel() {
             ..sunday =
                 const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 34)
             ..daysPerWeek =
-                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 36)
-            ..isDone =
-                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 38);
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 36);
           object.user.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
           object.user.attach(store);
+          InternalToManyAccess.setRelInfo(
+              object.dayMarks,
+              store,
+              RelInfo<DayMark>.toOneBacklink(
+                  4, object.id, (DayMark srcObject) => srcObject.habit),
+              store.box<Habit>());
           return object;
         }),
     Base: EntityDefinition<Base>(
@@ -524,6 +564,37 @@ ModelDefinition getObjectBoxModel() {
             ..isDone =
                 const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14);
 
+          return object;
+        }),
+    DayMark: EntityDefinition<DayMark>(
+        model: _entities[4],
+        toOneRelations: (DayMark object) => [object.habit],
+        toManyRelations: (DayMark object) => {},
+        getId: (DayMark object) => object.id,
+        setId: (DayMark object, int id) {
+          object.id = id;
+        },
+        objectToFB: (DayMark object, fb.Builder fbb) {
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addBool(1, object.isDone);
+          fbb.addInt64(2, object.date.millisecondsSinceEpoch);
+          fbb.addInt64(3, object.habit.targetId);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = DayMark(DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..isDone =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 6);
+          object.habit.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          object.habit.attach(store);
           return object;
         })
   };
@@ -639,10 +710,6 @@ class Habit_ {
   /// see [Habit.daysPerWeek]
   static final daysPerWeek =
       QueryBooleanProperty<Habit>(_entities[2].properties[15]);
-
-  /// see [Habit.isDone]
-  static final isDone =
-      QueryBooleanProperty<Habit>(_entities[2].properties[16]);
 }
 
 /// [Base] entity fields to define ObjectBox queries.
@@ -666,4 +733,21 @@ class Base_ {
 
   /// see [Base.isDone]
   static final isDone = QueryBooleanProperty<Base>(_entities[3].properties[5]);
+}
+
+/// [DayMark] entity fields to define ObjectBox queries.
+class DayMark_ {
+  /// see [DayMark.id]
+  static final id = QueryIntegerProperty<DayMark>(_entities[4].properties[0]);
+
+  /// see [DayMark.isDone]
+  static final isDone =
+      QueryBooleanProperty<DayMark>(_entities[4].properties[1]);
+
+  /// see [DayMark.date]
+  static final date = QueryIntegerProperty<DayMark>(_entities[4].properties[2]);
+
+  /// see [DayMark.habit]
+  static final habit =
+      QueryRelationToOne<DayMark, Habit>(_entities[4].properties[3]);
 }

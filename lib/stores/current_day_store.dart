@@ -1,4 +1,5 @@
 import 'package:bettertogether/Models/Base.dart';
+import 'package:bettertogether/Models/DayMark.dart';
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/Models/Task.dart';
 import 'package:bettertogether/stores/habit_store.dart';

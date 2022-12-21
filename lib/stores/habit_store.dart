@@ -1,3 +1,4 @@
+import 'package:bettertogether/Models/DayMark.dart';
 import 'package:bettertogether/Models/Habit.dart';
 import 'package:bettertogether/stores/user_store.dart';
 import 'package:mobx/mobx.dart';
@@ -33,6 +34,12 @@ abstract class _HabitRepositoryBase with Store {
   void putHabit(Habit habit) {
     habit.user.target = userRepository.currentUser;
     store.box<Habit>().put(habit);
+  }
+
+  void putDayMark(Habit habit, DayMark dayMark){
+    dayMark.habit.target = habit;
+    store.box<DayMark>().put(dayMark);
+    putHabit(habit);
   }
 
   void removeHabit(Habit habit) {
