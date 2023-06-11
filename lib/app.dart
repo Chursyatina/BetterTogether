@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -23,12 +25,22 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  @override
+  void initState() {
+    initFirebase();
+    super.initState();
+  }
   final UserRepository _userRepository = getIt<UserRepository>();
   final TaskRepository _taskRepository = getIt<TaskRepository>();
   final HabitRepository _habitRepository = getIt<HabitRepository>();
   final CurrentTaskStore _currentTaskStore = getIt<CurrentTaskStore>();
   final CurrentHabitStore _currentHabitStore = getIt<CurrentHabitStore>();
   final CurrentDayStore _currentDayStore = getIt<CurrentDayStore>();
+
+  void initFirebase() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+  }
 
   @override
   Widget build(BuildContext context) {

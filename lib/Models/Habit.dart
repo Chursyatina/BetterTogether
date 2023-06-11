@@ -166,9 +166,9 @@ class Habit extends Base {
     if (isDayMarkExists(dateTime)) {
       return dayMarks
           .firstWhere((element) =>
-              element.date!.year == dateTime.year &&
-              element.date!.month == dateTime.month &&
-              element.date!.day == dateTime.day)
+              element.date.year == dateTime.year &&
+              element.date.month == dateTime.month &&
+              element.date.day == dateTime.day)
           .isDone!;
     } else {
       return false;
@@ -180,15 +180,15 @@ class Habit extends Base {
     if (isDayMarkExists(dateTime)) {
       dayMarks
               .firstWhere((element) =>
-                  element.date!.year == dateTime.year &&
-                  element.date!.month == dateTime.month &&
-                  element.date!.day == dateTime.day)
+                  element.date.year == dateTime.year &&
+                  element.date.month == dateTime.month &&
+                  element.date.day == dateTime.day)
               .isDone =
           !dayMarks
               .firstWhere((element) =>
-                  element.date!.year == dateTime.year &&
-                  element.date!.month == dateTime.month &&
-                  element.date!.day == dateTime.day)
+                  element.date.year == dateTime.year &&
+                  element.date.month == dateTime.month &&
+                  element.date.day == dateTime.day)
               .isDone!;
     }
   }
@@ -199,11 +199,11 @@ class Habit extends Base {
     if (dayMarks
             .firstWhere(
                 (element) =>
-                    element.date!.year == dateTime.year &&
-                    element.date!.month == dateTime.month &&
-                    element.date!.day == dateTime.day,
+                    element.date.year == dateTime.year &&
+                    element.date.month == dateTime.month &&
+                    element.date.day == dateTime.day,
                 orElse: () => unrealDayMark)
-            .date!
+            .date
             .year !=
         DateTime.utc(1900).year) {
       return true;
